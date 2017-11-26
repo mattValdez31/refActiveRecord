@@ -235,7 +235,7 @@ class todo extends model
 }
 }
 
-class htmlTags
+/*class htmlTags
 {
 	public static function horizontalRule()
 	{
@@ -266,9 +266,9 @@ class htmlTable
 		}
 		echo '</table>';
 	}
-}
+} */
 				 				
-
+namespace execute {
 echo htmlTags::headingOne('Find One Entry demo');
 $record = todos::findOne(3);
 //print_r($records);
@@ -280,7 +280,7 @@ $records = accounts::findAll();
 //print_r($record);
 htmlTable::genTable($records);
 echo htmlTags::horizontalRule();
-
+}
 /*echo htmlTags::headingOne('Insert demo:');
 $ins = new todo();
 $ins->isdone = 0;
