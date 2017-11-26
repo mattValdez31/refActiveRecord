@@ -1,5 +1,6 @@
 <?php
 
+namespace conn {
 //turn on debugging messages
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
@@ -44,7 +45,9 @@ class dbConn
 		return self::$db;
 	}
 }
+}
 
+namespace coll {
 class collection
 {
 	static public function create()
@@ -79,17 +82,23 @@ class collection
 		return $recordsSet[0];
 	}
 }
+}
 
+namespace colAccts {
 class accounts extends collection
 {
 	protected static $modelName = 'account';
 }
+}
 
+namespace colTodos {
 class todos extends collection
 {
 	protected static $modelName = 'todo';
 }
+}
 
+namespace mdl {
 class model
 {
 	protected $tableName;
@@ -168,7 +177,9 @@ class model
 	}
 
 }
+}
 
+namespace mdlAcct {
 class account extends model
 {
 	public $id;
@@ -195,7 +206,9 @@ class account extends model
 
 
 }
+}
 
+namespace mdlTodo {
 class todo extends model
 {
 	public $id;
@@ -220,8 +233,9 @@ class todo extends model
 	}
 
 }
+}
 
-/*class htmlTags
+class htmlTags
 {
 	public static function horizontalRule()
 	{
@@ -253,7 +267,7 @@ class htmlTable
 		echo '</table>';
 	}
 }
-*/				 				
+				 				
 
 echo htmlTags::headingOne('Find One Entry demo');
 $record = todos::findOne(3);
