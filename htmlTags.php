@@ -1,5 +1,5 @@
 <?php
-
+namespace hTags {
 class htmlTags
 {
 	public static function horizontalRule()
@@ -12,5 +12,5 @@ class htmlTags
 		return '<h1>' . $text . '</h1>';
 	}
 }
-
+}
 ?>

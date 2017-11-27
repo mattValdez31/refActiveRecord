@@ -47,7 +47,7 @@ class dbConn
 }
 }
 
-namespace coll {
+namespace exe\coll {
 abstract class collection
 {
 	static public function create()
@@ -55,16 +55,29 @@ abstract class collection
 		$model = new static::$modelName;
 		return $model;
 	}
+	
+	static public function checkClass($tName)
+	{
+		if ($tName == 'exe\coll\todos')
+		{
+			return 'todos';
+		}
+		else
+		{
+			return 'accounts';
+		}
+	}
 
 	static public function findAll()
 	{
 		$db = \dbConn::getConnection();
 		$tableName = get_called_class();
+		$tableName = static::checkClass($tableName);
 		$sql = 'SELECT * FROM ' . $tableName;
 		$statement = $db->prepare($sql);
 		$statement->execute();
 		$class = static::$modelName;
-		$statement->setFetchMode(PDO::FETCH_CLASS, $class);
+		$statement->setFetchMode(\PDO::FETCH_CLASS, $class);
 		$recordsSet = $statement->fetchAll();
 		return $recordsSet;
 	}
@@ -73,11 +86,12 @@ abstract class collection
 	{
 		$db = \dbConn::getConnection();
 		$tableName = get_called_class(); //gets name of current class
+		$tableName = static::checkClass($tableName);
 		$sql = 'SELECT * FROM ' . $tableName . ' WHERE id =' . $id;
 		$statement = $db->prepare($sql);
 		$statement->execute();
 		$class = static::$modelName; //$modelName from child class
-		$statement->setFetchMode(PDO::FETCH_CLASS, $class); //maps columns of each row to class variables
+		$statement->setFetchMode(\PDO::FETCH_CLASS, $class); //maps columns of each row to class variables
 		$recordsSet = $statement->fetchAll();
 		return $recordsSet[0];
 	}
@@ -96,7 +110,7 @@ final class todos extends collection
 }
 }
 
-namespace mdl {
+namespace exe\mdl {
 abstract class model
 {
 	protected $tableName;
@@ -262,33 +276,43 @@ class htmlTable
 	}
 } */
 				 				
-namespace execute {
+namespace exe {
 
-include 'htmlTags.php';
-include 'htmlTable.php';
+//include 'htmlTags.php';
+//include 'htmlTable.php';
 
+class Manage
+{
+	public static function autoload($class)
+	{
+		include $class . '.php';
+	}
+}
+
+spl_autoload_register(array('exe\Manage', 'autoload'));
 
 echo \hTags\htmlTags::headingOne('Find One Entry demo');
-$record = \coll\todos::findOne(3);
-//print_r($records);
-\hTable\htmlTable::genTable($record);
+$record = coll\todos::findOne(3);
+print_r($record);
+//\hTable\htmlTable::genTable($record);
 echo \hTags\htmlTags::horizontalRule();
 
 echo \hTags\htmlTags::headingOne('Find All Entries demo:');
-$records = \coll\accounts::findAll();
+$records = coll\accounts::findAll();
 //print_r($record);
 \hTable\htmlTable::genTable($records);
 echo \hTags\htmlTags::horizontalRule();
 }
-/*echo htmlTags::headingOne('Insert demo:');
-$ins = new todo();
-$ins->isdone = 0;
+/*echo \hTags\htmlTags::headingOne('Insert demo:');
+$ins = new mdl\todo();
+$ins->isdone = 1;
 $ins->save();
-echo htmlTags::horizontalRule();
+echo \hTags\htmlTags::horizontalRule();
 
-echo htmlTags::headingOne('Delete demo:');
-$del = account::remove(13);
-echo htmlTags::horizontalRule();
+echo \hTags\htmlTags::headingOne('Delete demo:');
+$del = mdl\todo::remove(13);
+echo \hTags\htmlTags::horizontalRule();
+
 
 echo htmlTags::headingOne('Update demo:');
 $upd = new todo();

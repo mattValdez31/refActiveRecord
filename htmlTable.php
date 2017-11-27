@@ -1,10 +1,10 @@
 <?php
-
+namespace hTable {
 class htmlTable
 {
 	public static function genTable($result)
 	{
-		echo '<table>'
+		echo '<table>';
 		foreach ($result as $column)
 		{
 			echo '<tr>';
@@ -18,6 +18,7 @@ class htmlTable
 		}
 		echo '</table>';
 	}
+}
 }
 
 ?>
