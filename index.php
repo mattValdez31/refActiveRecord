@@ -1,6 +1,6 @@
 <?php
 
-namespace conn {
+namespace {
 //turn on debugging messages
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
@@ -48,7 +48,7 @@ class dbConn
 }
 
 namespace coll {
-class collection
+abstract class collection
 {
 	static public function create()
 	{
@@ -58,7 +58,7 @@ class collection
 
 	static public function findAll()
 	{
-		$db = dbConn::getConnection();
+		$db = \dbConn::getConnection();
 		$tableName = get_called_class();
 		$sql = 'SELECT * FROM ' . $tableName;
 		$statement = $db->prepare($sql);
@@ -71,7 +71,7 @@ class collection
 
 	static public function findOne($id)
 	{
-		$db = dbConn::getConnection();
+		$db = \dbConn::getConnection();
 		$tableName = get_called_class(); //gets name of current class
 		$sql = 'SELECT * FROM ' . $tableName . ' WHERE id =' . $id;
 		$statement = $db->prepare($sql);
@@ -82,24 +82,22 @@ class collection
 		return $recordsSet[0];
 	}
 }
-}
 
-namespace colAccts {
-class accounts extends collection
+
+final class accounts extends collection
 {
 	protected static $modelName = 'account';
 }
-}
 
-namespace colTodos {
-class todos extends collection
+
+final class todos extends collection
 {
 	protected static $modelName = 'todo';
 }
 }
 
 namespace mdl {
-class model
+abstract class model
 {
 	protected $tableName;
 	public function save()
@@ -118,7 +116,7 @@ class model
 			$sql = $this->update($tableName);
 		}
 		
-		$db = dbConn::getConnection();
+		$db = \dbConn::getConnection();
 		$statement = $db->prepare($sql);
 		$statement->execute();
 		print_r($sql);
@@ -140,7 +138,7 @@ class model
 	{
 		$class = get_called_class();
 		$tableName = $class::getTableName();
-		$db = dbConn::getConnection();
+		$db = \dbConn::getConnection();
 
 		$sql = 'DELETE FROM ' . $tableName . ' WHERE id = ' . $id;
 		
@@ -177,10 +175,8 @@ class model
 	}
 
 }
-}
 
-namespace mdlAcct {
-class account extends model
+final class account extends model
 {
 	public $id;
 	public $email = 'NULL';
@@ -206,10 +202,8 @@ class account extends model
 
 
 }
-}
 
-namespace mdlTodo {
-class todo extends model
+final class todo extends model
 {
 	public $id;
 	public $owneremail = 'NULL';
@@ -269,17 +263,22 @@ class htmlTable
 } */
 				 				
 namespace execute {
-echo htmlTags::headingOne('Find One Entry demo');
-$record = todos::findOne(3);
-//print_r($records);
-htmlTable::genTable($record);
-echo htmlTags::horizontalRule();
 
-echo htmlTags::headingOne('Find All Entries demo:');
-$records = accounts::findAll();
+include 'htmlTags.php';
+include 'htmlTable.php';
+
+
+echo \hTags\htmlTags::headingOne('Find One Entry demo');
+$record = \coll\todos::findOne(3);
+//print_r($records);
+\hTable\htmlTable::genTable($record);
+echo \hTags\htmlTags::horizontalRule();
+
+echo \hTags\htmlTags::headingOne('Find All Entries demo:');
+$records = \coll\accounts::findAll();
 //print_r($record);
-htmlTable::genTable($records);
-echo htmlTags::horizontalRule();
+\hTable\htmlTable::genTable($records);
+echo \hTags\htmlTags::horizontalRule();
 }
 /*echo htmlTags::headingOne('Insert demo:');
 $ins = new todo();
